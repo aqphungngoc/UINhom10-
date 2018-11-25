@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#007aff</color>
+
+    <color name="blue">#0079FF</color>
+    <color name="blue_2">#2396fa</color>
+    <color name="blue_3">#12f1f9</color>
+    <color name="pink">#ff007f</color>
+    <color name="white">#ffffff</color>
+    <color name="white_2">#e2e2e2</color>
+    <color name="white_3">#dcdcdc</color>
+    <color name="black">#000000</color>
+    <color name="black_2">#4d4d4d</color>
+    <color name="black_3">#9a000000</color>
+    <color name="gray">#6c6c6c</color>
+    <color name="gray_2">#9fc5f3fa</color>
+    <color name="yellow">#ffc800</color>
+    <color name="orang">#fd781f</color>
+    <color name="red">#e86767</color>
+    <color name="red_2">#712b2d</color>
+    <color name="status_bar">#2a7bca</color>
+    <color name="translucent_3">#7ab471ff</color>
+    <color name="transparent">#00000000</color>
+    <color name="transparent_1">#9affffff</color>
+    <color name="transparent_2">#9c3d3d3d</color>
+    <color name="green">#22b77d</color>
+    <color name="green_2">#2fbf87</color>
+    <color name="green_3">#72e972</color>
+    <color name="color_permisson_require">#45b145</color>
+    <color name="darkblue">#ff334d5d</color>
+    <color name="orange">#ffe27c3f</color>
+    <color name="text">#404040</color>
+    <color name="devinder">#cccccc</color>
+
+    <!--Color for Native Ads-->
+    <item name="blue_native" type="color">#FF33B5E5</item>
+    <item name="purple_native" type="color">#FFAA66CC</item>
+    <item name="green_native" type="color">#FF99CC00</item>
+    <item name="orange_native" type="color">#FFFFBB33</item>
+    <item name="red_native" type="color">#FFFF4444</item>
+    <item name="darkblue_native" type="color">#FF0099CC</item>
+    <item name="darkpurple_native" type="color">#FF9933CC</item>
+    <item name="darkgreen_native" type="color">#FF669900</item>
+    <item name="darkorange_native" type="color">#FFFF8800</item>
+    <item name="darkred_native" type="color">#FFCC0000</item>
+
+    <!--app-->
+    <item name="backgound_main" type="color">#f4f4f4</item>
+    <item name="texttablayout" type="color">#797979</item>
+    <item name="textsub" type="color">#616161</item>
+
+
+</resources>

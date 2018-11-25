@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set_reminder_option"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:paddingRight="50dp"
+        android:paddingLeft="50dp"
+        android:textSize="15dp"
+        android:textColor="#606060"/>
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:gravity="center"
+       android:orientation="horizontal">
+       <ImageView
+           android:layout_width="40dp"
+           android:layout_height="40dp"
+           android:padding="5dp"
+           android:src="@drawable/volume_off"
+           android:id="@+id/ringtone_img"/>
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_weight="1"
+           android:layout_height="wrap_content"
+           android:text="@string/ringtone"/>
+       <Switch
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:id="@+id/ringtone"/>
+   </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="5dp"
+            android:src="@drawable/vibrate_off"
+            android:id="@+id/vibrate_img"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/vibrate"/>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/vibrate"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="5dp"
+            android:src="@drawable/repeat_off"
+            android:id="@+id/repeate_img"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/repeate"/>
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/repeate"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="@string/cancel"
+            android:textAllCaps="true"
+            android:textColor="@color/colorAccent" />
+        <Button
+            android:id="@+id/cofirm"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:textSize="15sp"
+            android:textColor="@color/colorAccent"
+            android:textAllCaps="true"
+            />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
