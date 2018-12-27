@@ -901,7 +901,7 @@ public class SpeechNote extends AppCompatActivity {
         reconigerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, "2000");
         reconigerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
         reconigerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 100);
-        Log.i("languuuuu", languagePreference);
+//        Log.i("languuuuu", languagePreference);
         if (languagePreference != null && !languagePreference.equals("")) {
             reconigerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, languagePreference);
             reconigerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, languagePreference);
