@@ -114,5 +114,6 @@
     <string name="app_install_requirement">Make sure you have installed google app, google launcher and enable google voice input to use Voice to Text feature</string>
     <string name="speech_setting">Speech setting</string>
 
+    <string name="BASE_URL">https://alarm-speak-note-quan.herokuapp.com</string>
 
 </resources>

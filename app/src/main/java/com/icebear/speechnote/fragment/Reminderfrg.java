@@ -1,6 +1,7 @@
 package com.icebear.speechnote.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,11 +22,19 @@ import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.activity.MainActivity;
 import com.icebear.speechnote.activity.SpeechNote;
+import com.icebear.speechnote.alarmwithreminder.AlarmRequest;
+import com.icebear.speechnote.alarmwithreminder.ApiService;
+import com.icebear.speechnote.alarmwithreminder.DataService;
 import com.icebear.speechnote.alarmwithreminder.ReminderManager;
 import com.icebear.speechnote.itemadapter.ReminderAdapter;
+import com.icebear.speechnote.notefile.Notifi;
 import com.icebear.speechnote.notefile.Reminder;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Reminderfrg extends Fragment {
 
@@ -36,7 +45,8 @@ public class Reminderfrg extends Fragment {
     private LinearLayout bannernote;
     private MainActivity activity;
     private FloatingActionButton fabreminder;
-    public Reminderfrg(){
+
+    public Reminderfrg() {
 
     }
 
@@ -64,8 +74,7 @@ public class Reminderfrg extends Fragment {
         });
 
         LoadData loadData = new LoadData();
-        loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
-
+        loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
 
         IntentFilter deletecate = new IntentFilter(NoteConst.DELETE_REMINDER);
@@ -78,15 +87,17 @@ public class Reminderfrg extends Fragment {
     }
 
 
-
     BroadcastReceiver deletereminderReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Reminder reminder = (Reminder) intent.getSerializableExtra(NoteConst.OBJECT);
             activity.database.deleteReminder(reminder);
-            ReminderManager.setAlarms(context);
+
+//            ReminderManager.setAlarms(context);
+            ReminderManager.putNotitoServer(context);
+
             LoadData loadData = new LoadData();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     };
 
@@ -94,11 +105,28 @@ public class Reminderfrg extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             LoadData loadData = new LoadData();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
-            ReminderManager.setAlarms(context);
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            ArrayList<Notifi> list = ReminderManager.putNotitoServer(context);
+
+            DataService dataService = ApiService.getService(context);
+            Call<Void> callback = dataService.setAlarms(new AlarmRequest(list));
+            callback.enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+
+                }
+            });
+
+//            ReminderManager.setAlarms(context);
         }
     };
-    
+
+    @SuppressLint("StaticFieldLeak")
     public class LoadData extends AsyncTask<Void, Void, ArrayList<Reminder>> {
         protected void onPreExecute() {
             super.onPreExecute();
@@ -111,7 +139,7 @@ public class Reminderfrg extends Fragment {
             progressBar.setVisibility(View.GONE);
 
 
-            if (s.size() == 0){
+            if (s.size() == 0) {
                 bannernonote.setVisibility(View.VISIBLE);
                 bannernote.setVisibility(View.GONE);
 
@@ -132,10 +160,10 @@ public class Reminderfrg extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (updatereminderReceiver != null){
+        if (updatereminderReceiver != null) {
             activity.unregisterReceiver(updatereminderReceiver);
         }
-        if (deletereminderReceiver != null){
+        if (deletereminderReceiver != null) {
             activity.unregisterReceiver(deletereminderReceiver);
         }
     }

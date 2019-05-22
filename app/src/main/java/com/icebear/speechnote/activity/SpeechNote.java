@@ -4,8 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,8 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.speech.tts.TextToSpeech;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -50,14 +46,12 @@ import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.WidgetProvider;
 import com.icebear.speechnote.itemadapter.SpinerCategoryAdapter;
-
 import com.icebear.speechnote.notefile.Category;
 import com.icebear.speechnote.notefile.DatabaseHelper;
 import com.icebear.speechnote.notefile.Medit;
 import com.icebear.speechnote.notefile.Noteib;
 import com.icebear.speechnote.notefile.Reminder;
 import com.icebear.speechnote.utils.Helper;
-
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -468,7 +462,7 @@ public class SpeechNote extends AppCompatActivity {
 
     private void closedlg() {
 
-        if (dialogopen){
+        if (dialogopen) {
             dialogopen = false;
             voicereconigDiaglog.setVisibility(View.GONE);
 //        voicebtn.setVisibility(View.VISIBLE);
@@ -625,7 +619,6 @@ public class SpeechNote extends AppCompatActivity {
             sendBroadcast(intent);
             Toast.makeText(getApplicationContext(), getString(R.string.saved), Toast.LENGTH_SHORT).show();
 
-
             Intent intent1 = new Intent(WidgetProvider.BROADCAST_WIDGET_2);
             sendBroadcast(intent1);
 
@@ -677,7 +670,7 @@ public class SpeechNote extends AppCompatActivity {
     private void setUpSpinerCategory() {
         database = new DatabaseHelper(getApplicationContext());
         final ArrayList<Category> categories = new ArrayList<Category>();
-        categories.add(new Category(0, getString(R.string.choose_Note_Book),0));
+        categories.add(new Category(0, getString(R.string.choose_Note_Book), 0));
         final ArrayList cates = database.getAllCategories();
         categories.addAll(cates);
         SpinerCategoryAdapter dataAdapter = new SpinerCategoryAdapter(this,
@@ -742,42 +735,44 @@ public class SpeechNote extends AppCompatActivity {
         dlg.setCancelable(false);
         dlg.setCanceledOnTouchOutside(false);
         dlg.show();
-        final ImageView ringtoneimg = (ImageView) dlg.findViewById(R.id.ringtone_img);
-        final ImageView vibrateimg = (ImageView) dlg.findViewById(R.id.vibrate_img);
+//        final ImageView ringtoneimg = (ImageView) dlg.findViewById(R.id.ringtone_img);
+//        final ImageView vibrateimg = (ImageView) dlg.findViewById(R.id.vibrate_img);
+
+//        Switch ringtone = (Switch) dlg.findViewById(R.id.ringtone);
+//        final Switch vibrate = (Switch) dlg.findViewById(R.id.vibrate);
+
         final ImageView repeatimg = (ImageView) dlg.findViewById(R.id.repeate_img);
-        Switch ringtone = (Switch) dlg.findViewById(R.id.ringtone);
-        final Switch vibrate = (Switch) dlg.findViewById(R.id.vibrate);
         Switch repeate = (Switch) dlg.findViewById(R.id.repeate);
 
         final Reminder reminder = new Reminder();
         reminder.setNoteid(note.getId());
         reminder.setNotedes(note.getTitle());
         reminder.setTime(time);
-        ringtone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    reminder.setRingtone(1);
-                    ringtoneimg.setImageResource(R.drawable.volume_on);
-                } else {
-                    reminder.setRingtone(0);
-                    ringtoneimg.setImageResource(R.drawable.volume_off);
-                }
-            }
-        });
-
-        vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    reminder.setVibrate(1);
-                    vibrateimg.setImageResource(R.drawable.vibrate_on);
-                } else {
-                    reminder.setVibrate(0);
-                    vibrateimg.setImageResource(R.drawable.vibrate_off);
-                }
-            }
-        });
+//        ringtone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+//                if (isChecked) {
+//                    reminder.setRingtone(1);
+//                    ringtoneimg.setImageResource(R.drawable.volume_on);
+//                } else {
+//                    reminder.setRingtone(0);
+//                    ringtoneimg.setImageResource(R.drawable.volume_off);
+//                }
+//            }
+//        });
+//
+//        vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+//                if (b) {
+//                    reminder.setVibrate(1);
+//                    vibrateimg.setImageResource(R.drawable.vibrate_on);
+//                } else {
+//                    reminder.setVibrate(0);
+//                    vibrateimg.setImageResource(R.drawable.vibrate_off);
+//                }
+//            }
+//        });
         repeate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

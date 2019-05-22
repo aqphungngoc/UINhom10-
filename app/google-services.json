@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "108050245447",
+    "firebase_url": "https://speechnote-91608.firebaseio.com",
+    "project_id": "speechnote-91608",
+    "storage_bucket": "speechnote-91608.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:108050245447:android:b63a92e488b4df67",
+        "android_client_info": {
+          "package_name": "com.icebear.speechnote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "108050245447-k0eoop5p6olrf3pfm7oofuudjqh4i64j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJg8SPjgBuuto4WJIDXQgNFV9x3a4Az4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "108050245447-k0eoop5p6olrf3pfm7oofuudjqh4i64j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

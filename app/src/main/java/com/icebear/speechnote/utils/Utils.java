@@ -8,6 +8,10 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 
 import com.icebear.speechnote.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Utils {
     private static final String PREFERENCES_FILE = "materialsample_settings";
 
@@ -42,4 +46,11 @@ public class Utils {
         editor.putString(settingName, settingValue);
         editor.apply();
     }
+
+    public static String getIsoDate(Long time, String dateFormat) {
+        SimpleDateFormat format = new SimpleDateFormat(dateFormat, Locale.ENGLISH);
+        Date date = new Date(time);
+        return format.format(date);
+    }
+
 }
