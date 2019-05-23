@@ -41,7 +41,7 @@
     <string name="app_success">Successfull</string>
     <string name="free">Free</string>
     <string name="five_stars">5.0 &#9733;</string>
-    <string name="splash_title">SkyFall Team</string>
+    <!--<string name="splash_title">SkyFall Team</string>-->
     <string name="splash_loading">Loading ads...</string>
     <string name="main_discovery">Discovery (Ads)</string>
     <string name="main_rate_us">Rate us</string>

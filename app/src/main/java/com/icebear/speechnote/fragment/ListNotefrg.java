@@ -24,7 +24,8 @@ import com.icebear.speechnote.WidgetProvider;
 import com.icebear.speechnote.activity.MainActivity;
 import com.icebear.speechnote.activity.SpeechNote;
 import com.icebear.speechnote.itemadapter.NoteAdapter;
-import com.icebear.speechnote.notefile.Noteib;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.model.Noteib;
 
 import java.util.ArrayList;
 
@@ -47,6 +48,8 @@ public class ListNotefrg extends Fragment {
     private FloatingActionButton fabvoice, fabtext, fabtodo;
     public LinearLayout overlay;
 
+    private DatabaseHelper database;
+
     public ListNotefrg() {
 
     }
@@ -57,6 +60,9 @@ public class ListNotefrg extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_list_note, container, false);
+
+        database = new DatabaseHelper(getContext());
+
         activity = (MainActivity) getActivity();
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
@@ -179,8 +185,8 @@ public class ListNotefrg extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             Noteib noteib = (Noteib) intent.getSerializableExtra(NoteConst.OBJECT);
-            activity.database.deleteNote(noteib);
-
+            database.deleteNote(noteib);
+            database.deleteSig(noteib.getId());
             Intent intent1 = new Intent(WidgetProvider.BROADCAST_WIDGET_2);
             activity.sendBroadcast(intent1);
 
@@ -233,7 +239,7 @@ public class ListNotefrg extends Fragment {
 
             ArrayList<Noteib> notelist = new ArrayList<>();
 
-            notelist = activity.database.getAllNotes();
+            notelist = database.getAllNotes();
             return notelist;
         }
     }

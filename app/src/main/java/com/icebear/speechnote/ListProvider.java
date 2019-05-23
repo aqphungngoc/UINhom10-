@@ -4,15 +4,13 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.icebear.speechnote.activity.SpeechNote;
-import com.icebear.speechnote.activity.SplashScreenActivity;
-import com.icebear.speechnote.notefile.DatabaseHelper;
-import com.icebear.speechnote.notefile.Noteib;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.model.Noteib;
 
 import java.util.ArrayList;
 

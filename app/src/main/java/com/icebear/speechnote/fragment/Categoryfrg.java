@@ -1,6 +1,7 @@
 package com.icebear.speechnote.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -22,13 +23,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-
 import com.github.clans.fab.FloatingActionButton;
 import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.activity.MainActivity;
 import com.icebear.speechnote.itemadapter.CategoryAdapter;
-import com.icebear.speechnote.notefile.Category;
+import com.icebear.speechnote.model.Category;
 
 import java.util.ArrayList;
 
@@ -42,7 +42,7 @@ public class Categoryfrg extends Fragment {
     private FloatingActionButton fabcategory;
 
 
-    public Categoryfrg(){
+    public Categoryfrg() {
 
     }
 
@@ -95,7 +95,7 @@ public class Categoryfrg extends Fragment {
             Category category = (Category) intent.getSerializableExtra(NoteConst.OBJECT);
             activity.database.deleteCategory(category);
             LoadData loadData = new LoadData();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     };
 
@@ -103,10 +103,11 @@ public class Categoryfrg extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             LoadData loadData = new LoadData();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     };
 
+    @SuppressLint("StaticFieldLeak")
     public class LoadData extends AsyncTask<Void, Void, ArrayList<Category>> {
         protected void onPreExecute() {
             super.onPreExecute();
@@ -118,7 +119,7 @@ public class Categoryfrg extends Fragment {
             super.onPostExecute(s);
             progressBar.setVisibility(View.GONE);
 
-            if (s.size() == 0){
+            if (s.size() == 0) {
                 bannernonote.setVisibility(View.VISIBLE);
                 bannernote.setVisibility(View.GONE);
 
@@ -144,7 +145,7 @@ public class Categoryfrg extends Fragment {
 
     private void fileNameDlg() {
         final Dialog dlg = new Dialog(activity);
-        Log.i("quanpna",  "step2: show file name diaglog ");
+        Log.i("quanpna", "step2: show file name diaglog ");
 //        dlg.requestWindowFeature(1);
         dlg.setContentView(R.layout.dialog_add_new_category);
         dlg.setCanceledOnTouchOutside(true);
@@ -171,11 +172,11 @@ public class Categoryfrg extends Fragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            toastisshowing=true;
+                            toastisshowing = true;
                         }
                     }, 4000);
                 } else {
-                    fileNameEtx.setSelection(fileNameEtx.getText().toString().length()-1);
+                    fileNameEtx.setSelection(fileNameEtx.getText().toString().length() - 1);
                     Category category = new Category();
                     category.setCategory(fileNameEtx.getText().toString());
                     activity.database.addCategory(category);
@@ -190,14 +191,14 @@ public class Categoryfrg extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (updatecateReceiver != null){
+        if (updatecateReceiver != null) {
             activity.unregisterReceiver(updatecateReceiver);
         }
-        if (deletecateReceiver != null){
+        if (deletecateReceiver != null) {
             activity.unregisterReceiver(deletecateReceiver);
         }
 
-        if (addcateReceiver != null){
+        if (addcateReceiver != null) {
             activity.unregisterReceiver(addcateReceiver);
         }
     }

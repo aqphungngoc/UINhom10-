@@ -37,12 +37,12 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/tab_empty"/>
+                    android:src="@drawable/tab_empty" />
 
                 <TextView
-                    android:layout_marginTop="15dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
                     android:text="@string/no_note_list_note_frg"
                     android:textColor="@color/textsub" />
             </LinearLayout>
@@ -56,22 +56,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <LinearLayout
-                        android:id="@+id/lnNative"
-                        android:layout_width="match_parent"
-                        android:background="@color/backgound_main"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="5dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                    </LinearLayout>
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/list_note"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingBottom="50dp">
-                    </android.support.v7.widget.RecyclerView>
+                        android:paddingBottom="50dp"></android.support.v7.widget.RecyclerView>
                 </LinearLayout>
 
             </android.support.v4.widget.NestedScrollView>
@@ -93,7 +83,6 @@
     </LinearLayout>
 
 
-
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_menu"
         android:layout_width="wrap_content"
@@ -108,15 +97,14 @@
         app:menu_colorRipple="@color/colorAccent"
         app:menu_fab_hide_animation="@anim/hide_to_bottom"
         app:menu_fab_show_animation="@anim/show_from_bottom"
-        app:menu_labels_hideAnimation="@anim/hide_to_bottom"
-        app:menu_labels_showAnimation="@anim/show_from_bottom"
         app:menu_labels_colorNormal="@color/blue"
         app:menu_labels_colorPressed="@color/colorPrimaryDark"
         app:menu_labels_colorRipple="@color/colorAccent"
         app:menu_labels_cornerRadius="3dp"
+        app:menu_labels_hideAnimation="@anim/hide_to_bottom"
+        app:menu_labels_showAnimation="@anim/show_from_bottom"
         app:menu_labels_textColor="@color/white"
-        app:menu_showShadow="true"
-        >
+        app:menu_showShadow="true">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_voicenote"
@@ -129,8 +117,8 @@
             app:fab_colorRipple="@color/colorAccent"
 
             app:fab_hideAnimation="@anim/hide_to_bottom"
-            app:fab_showAnimation="@anim/show_from_bottom"
             app:fab_label="@string/voicenote"
+            app:fab_showAnimation="@anim/show_from_bottom"
             app:fab_size="normal" />
 
         <com.github.clans.fab.FloatingActionButton
@@ -139,27 +127,27 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/add_textnote"
-            app:fab_hideAnimation="@anim/hide_to_bottom"
-            app:fab_showAnimation="@anim/show_from_bottom"
             app:fab_colorNormal="@color/blue"
             app:fab_colorPressed="@color/colorPrimaryDark"
             app:fab_colorRipple="@color/colorAccent"
+            app:fab_hideAnimation="@anim/hide_to_bottom"
             app:fab_label="@string/textnote"
+            app:fab_showAnimation="@anim/show_from_bottom"
             app:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_todolist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_hideAnimation="@anim/hide_to_bottom"
-            app:fab_showAnimation="@anim/show_from_bottom"
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/add_checklist"
             app:fab_colorNormal="@color/blue"
             app:fab_colorPressed="@color/colorPrimaryDark"
             app:fab_colorRipple="@color/colorAccent"
-
+            app:fab_hideAnimation="@anim/hide_to_bottom"
             app:fab_label="@string/todolist"
+
+            app:fab_showAnimation="@anim/show_from_bottom"
             app:fab_size="mini" />
 
     </com.github.clans.fab.FloatingActionMenu>

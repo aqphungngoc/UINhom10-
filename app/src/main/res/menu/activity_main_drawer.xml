@@ -12,18 +12,12 @@
             android:id="@+id/nav_choose_language_input"
             android:icon="@drawable/ic_language_black_24dp"
             android:title="@string/choose_language_input" />
-        <item
-            android:id="@+id/nav_feedback"
-            android:icon="@drawable/ic_feedback"
-            android:title="@string/main_feedback" />
+       
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_share"
             android:title="@string/main_share" />
-        <item
-            android:id="@+id/nav_policy"
-            android:icon="@drawable/ic_policy"
-            android:title="@string/main_policy" />
+
 
     </group>
 

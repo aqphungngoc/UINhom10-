@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,8 +26,8 @@ import com.icebear.speechnote.R;
 import com.icebear.speechnote.WidgetProvider;
 import com.icebear.speechnote.itemadapter.NoteAdapter;
 import com.icebear.speechnote.itemadapter.SpinerPiorityAdapter;
-import com.icebear.speechnote.notefile.DatabaseHelper;
-import com.icebear.speechnote.notefile.Noteib;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.model.Noteib;
 import com.icebear.speechnote.utils.Helper;
 
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         LoadDataByDesCatePior loadData = new LoadDataByDesCatePior();
-        loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{"", "" ,""});
+        loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{"", "", ""});
 
         IntentFilter searchIntent = new IntentFilter(NoteConst.SEARCH_TITLE);
         registerReceiver(loadDataByDesCatePior, searchIntent);
@@ -84,7 +84,7 @@ public class SearchActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Noteib noteib = (Noteib) intent.getSerializableExtra(NoteConst.OBJECT);
             database.deleteNote(noteib);
-
+            database.deleteSig(noteib.getId());
             Intent intent1 = new Intent(WidgetProvider.BROADCAST_WIDGET_2);
             sendBroadcast(intent1);
 //        Intent intent1 = new Intent(activity, WidgetProvider.class);
@@ -95,7 +95,7 @@ public class SearchActivity extends AppCompatActivity {
 
             Log.i("aaaaa", "delete note");
             LoadDataByDesCatePior loadData = new LoadDataByDesCatePior();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode+"", "" ,cursearch});
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode + "", "", cursearch});
 
         }
     };
@@ -137,17 +137,13 @@ public class SearchActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
     }
 
     private BroadcastReceiver loadDataByDesCatePior = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             LoadDataByDesCatePior loadData = new LoadDataByDesCatePior();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode+"", "" ,cursearch});
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode + "", "", cursearch});
         }
     };
 
@@ -171,9 +167,9 @@ public class SearchActivity extends AppCompatActivity {
 
             ArrayList<Noteib> notelist;
 
-            if (strings[0].equals(NoteConst.DEFAULT_CATE_AND_PIO+"")){
-                notelist = database.getListNoteDesbyCatePior("",  strings[1], strings[2]);
-            }else {
+            if (strings[0].equals(NoteConst.DEFAULT_CATE_AND_PIO + "")) {
+                notelist = database.getListNoteDesbyCatePior("", strings[1], strings[2]);
+            } else {
                 notelist = database.getListNoteDesbyCatePior(strings[0], strings[1], strings[2]);
             }
 
@@ -245,10 +241,10 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (loadDataByDesCatePior != null){
+        if (loadDataByDesCatePior != null) {
             unregisterReceiver(loadDataByDesCatePior);
         }
-        if (deletedb!=null){
+        if (deletedb != null) {
             unregisterReceiver(deletedb);
         }
     }

@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.activity.MainActivity;
-import com.icebear.speechnote.notefile.Reminder;
+import com.icebear.speechnote.model.Reminder;
 import com.icebear.speechnote.utils.Helper;
 
 import java.util.ArrayList;

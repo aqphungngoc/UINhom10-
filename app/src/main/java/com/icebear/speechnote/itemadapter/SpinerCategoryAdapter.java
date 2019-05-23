@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.icebear.speechnote.R;
-import com.icebear.speechnote.notefile.Category;
+import com.icebear.speechnote.model.Category;
 
 import java.util.ArrayList;
 

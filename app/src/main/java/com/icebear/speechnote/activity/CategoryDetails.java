@@ -6,8 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,11 +28,10 @@ import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.WidgetProvider;
 import com.icebear.speechnote.itemadapter.NoteAdapter;
-
 import com.icebear.speechnote.itemadapter.SpinerPiorityAdapter;
-import com.icebear.speechnote.notefile.Category;
-import com.icebear.speechnote.notefile.DatabaseHelper;
-import com.icebear.speechnote.notefile.Noteib;
+import com.icebear.speechnote.model.Category;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.model.Noteib;
 import com.icebear.speechnote.utils.Helper;
 
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class CategoryDetails extends AppCompatActivity {
     public DatabaseHelper database;
     private RecyclerView recyclerView;
 
-//    private ImageView tip;
+    //    private ImageView tip;
     private ImageView close;
     private Spinner filterSpiner;
     private CardView filterCardView;
@@ -106,7 +105,7 @@ public class CategoryDetails extends AppCompatActivity {
         fabmenu.setOnMenuButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (fabmenu.isOpened()){
+                if (fabmenu.isOpened()) {
                     overlay.setVisibility(View.GONE);
                     fabtext.hide(true);
                     fabtodo.hide(true);
@@ -163,8 +162,6 @@ public class CategoryDetails extends AppCompatActivity {
         });
 
 
-
-
         recyclerView = (RecyclerView) findViewById(R.id.list_note);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
@@ -178,7 +175,7 @@ public class CategoryDetails extends AppCompatActivity {
         setUpSpinerPiority();
 
         LoadDataByCate loadDataByCate = new LoadDataByCate();
-        loadDataByCate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{category.getId()+""});
+        loadDataByCate.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{category.getId() + ""});
 
         IntentFilter deletedbIntent = new IntentFilter(NoteConst.DELETE_NOTE);
         registerReceiver(deletedb, deletedbIntent);
@@ -191,7 +188,6 @@ public class CategoryDetails extends AppCompatActivity {
 
 
     }
-
 
 
     private void setUpSpinerPiority() {
@@ -237,13 +233,13 @@ public class CategoryDetails extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Noteib noteib = (Noteib) intent.getSerializableExtra(NoteConst.OBJECT);
             database.deleteNote(noteib);
-
+            database.deleteSig(noteib.getId());
             Intent intent1 = new Intent(WidgetProvider.BROADCAST_WIDGET_2);
             sendBroadcast(intent1);
 
             Log.i("aaaaa", "delete note");
             LoadDataByDesCatePior loadData = new LoadDataByDesCatePior();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{"", category.getId()+"" ,""});
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{"", category.getId() + "", ""});
 
         }
     };
@@ -252,7 +248,7 @@ public class CategoryDetails extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             LoadDataByDesCatePior loadData = new LoadDataByDesCatePior();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode+"", category.getId()+"" ,cursearch});
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode + "", category.getId() + "", cursearch});
         }
     };
 
@@ -260,7 +256,7 @@ public class CategoryDetails extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             LoadDataByDesCatePior loadData = new LoadDataByDesCatePior();
-            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode+"", category.getId()+"" ,cursearch});
+            loadData.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{filterCode + "", category.getId() + "", cursearch});
         }
     };
 
@@ -274,7 +270,7 @@ public class CategoryDetails extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Noteib> s) {
             super.onPostExecute(s);
 
-            if (s.size() == 0){
+            if (s.size() == 0) {
                 bannernonote.setVisibility(View.VISIBLE);
                 bannernote.setVisibility(View.GONE);
 
@@ -294,9 +290,9 @@ public class CategoryDetails extends AppCompatActivity {
 
             ArrayList<Noteib> notelist;
 
-            if (strings[0].equals(NoteConst.DEFAULT_CATE_AND_PIO+"")){
-                notelist = database.getListNoteDesbyCatePior("",  strings[1], strings[2]);
-            }else {
+            if (strings[0].equals(NoteConst.DEFAULT_CATE_AND_PIO + "")) {
+                notelist = database.getListNoteDesbyCatePior("", strings[1], strings[2]);
+            } else {
                 notelist = database.getListNoteDesbyCatePior(strings[0], strings[1], strings[2]);
             }
 
@@ -315,7 +311,7 @@ public class CategoryDetails extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Noteib> s) {
             super.onPostExecute(s);
 
-            if (s.size() == 0){
+            if (s.size() == 0) {
                 bannernonote.setVisibility(View.VISIBLE);
                 bannernote.setVisibility(View.GONE);
 
@@ -331,15 +327,14 @@ public class CategoryDetails extends AppCompatActivity {
         protected ArrayList<Noteib> doInBackground(String... strings) {
             Log.i("ssssss", "cateid: " + strings[0]);
             ArrayList<Noteib> notelist;
-            if (strings[0].equals("0")){
+            if (strings[0].equals("0")) {
                 notelist = database.getAllNotes();
-            }else {
+            } else {
                 notelist = database.getListNotebyCate(strings[0]);
             }
             return notelist;
         }
     }
-
 
 
     @Override
@@ -402,15 +397,15 @@ public class CategoryDetails extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (loadDataByDesCatePior != null){
+        if (loadDataByDesCatePior != null) {
             unregisterReceiver(loadDataByDesCatePior);
         }
 
-        if (deletedb != null){
+        if (deletedb != null) {
             unregisterReceiver(deletedb);
         }
 
-        if (updatebyCate != null){
+        if (updatebyCate != null) {
             unregisterReceiver(updatebyCate);
         }
     }

@@ -125,16 +125,6 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <LinearLayout
-                                android:id="@+id/lnNative"
-                                android:layout_width="match_parent"
-                                android:background="@color/backgound_main"
-                                android:paddingBottom="5dp"
-                                android:paddingTop="5dp"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                            </LinearLayout>
 
                             <android.support.v7.widget.RecyclerView
                                 android:id="@+id/list_note"

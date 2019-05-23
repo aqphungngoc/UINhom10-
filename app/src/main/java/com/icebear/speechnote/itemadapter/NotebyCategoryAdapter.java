@@ -18,9 +18,8 @@ import android.widget.TextView;
 import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.activity.CategoryDetails;
-import com.icebear.speechnote.activity.MainActivity;
 import com.icebear.speechnote.activity.SpeechNote;
-import com.icebear.speechnote.notefile.Noteib;
+import com.icebear.speechnote.model.Noteib;
 import com.icebear.speechnote.utils.Helper;
 
 import java.util.ArrayList;

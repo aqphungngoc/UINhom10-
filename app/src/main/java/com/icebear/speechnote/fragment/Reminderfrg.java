@@ -27,8 +27,9 @@ import com.icebear.speechnote.alarmwithreminder.ApiService;
 import com.icebear.speechnote.alarmwithreminder.DataService;
 import com.icebear.speechnote.alarmwithreminder.ReminderManager;
 import com.icebear.speechnote.itemadapter.ReminderAdapter;
-import com.icebear.speechnote.notefile.Notifi;
-import com.icebear.speechnote.notefile.Reminder;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.model.Notifi;
+import com.icebear.speechnote.model.Reminder;
 
 import java.util.ArrayList;
 
@@ -46,6 +47,8 @@ public class Reminderfrg extends Fragment {
     private MainActivity activity;
     private FloatingActionButton fabreminder;
 
+    private DatabaseHelper database;
+
     public Reminderfrg() {
 
     }
@@ -55,6 +58,9 @@ public class Reminderfrg extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reminder, container, false);
+
+        database = new DatabaseHelper(getContext());
+
         activity = (MainActivity) getActivity();
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         bannernonote = (LinearLayout) view.findViewById(R.id.banner_no_note);
@@ -91,7 +97,7 @@ public class Reminderfrg extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             Reminder reminder = (Reminder) intent.getSerializableExtra(NoteConst.OBJECT);
-            activity.database.deleteReminder(reminder);
+            database.deleteReminder(reminder);
 
 //            ReminderManager.setAlarms(context);
             ReminderManager.putNotitoServer(context);
@@ -153,7 +159,7 @@ public class Reminderfrg extends Fragment {
         }
 
         protected ArrayList<Reminder> doInBackground(Void... voids) {
-            return activity.database.getAllReminder();
+            return database.getAllReminder();
         }
     }
 

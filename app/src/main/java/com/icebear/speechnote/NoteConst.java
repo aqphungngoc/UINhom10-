@@ -1,9 +1,8 @@
 package com.icebear.speechnote;
 
-import android.content.Context;
 import android.util.JsonWriter;
 
-import com.icebear.speechnote.notefile.Medit;
+import com.icebear.speechnote.model.Medit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,7 +11,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.List;
 
 public class NoteConst {
 

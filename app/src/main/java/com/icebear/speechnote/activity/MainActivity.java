@@ -1,30 +1,23 @@
 package com.icebear.speechnote.activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Bundle;
-
-import android.os.CountDownTimer;
 import android.os.Handler;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.CardView;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.animation.AnimationUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -32,15 +25,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-
 import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.fragment.DepthTransformation;
-import com.icebear.speechnote.notefile.DatabaseHelper;
-import com.icebear.speechnote.utils.Constant;
-import com.icebear.speechnote.utils.Helper;
 import com.icebear.speechnote.fragment.FragmentTabsAdapter;
-import com.icebear.speechnote.utils.MySetting;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.utils.Helper;
 import com.icebear.speechnote.utils.Utils;
 
 import java.util.ArrayList;
@@ -55,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     Intent introIntent;
 
     public static final String FRAGMENT_NOTE_LIST = "Notes";
-    public static final String FRAGMENT_REMINDER = "Reminder";
+    public static final String FRAGMENT_REMINDER = "Reminder Log";
     public static final String FRAGMENT_CATEGORY = "Notebook";
 
     private TabLayout tabLayout;
@@ -75,6 +65,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        database = new DatabaseHelper(getApplicationContext());
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -89,21 +82,18 @@ public class MainActivity extends AppCompatActivity
         introIntent = new Intent(MainActivity.this, OnboardingActivity.class);
         introIntent.putExtra(PREF_USER_FIRST_TIME, isUserFirstTime);
 
-       
 
-        if (isUserFirstTime){
+        if (isUserFirstTime) {
             startActivity(introIntent);
-            tipbanner.setVisibility(View.VISIBLE);
+//            tipbanner.setVisibility(View.VISIBLE);
         } else {
-            tipbanner.setVisibility(View.GONE);
+
         }
+
+        tipbanner.setVisibility(View.GONE);
 
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         viewPager = (ViewPager) findViewById(R.id.pager);
-
-        database = new DatabaseHelper(getApplicationContext());
-
-
 
 
         tip.setOnClickListener(new View.OnClickListener() {
@@ -158,17 +148,12 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-
-
 //        Intent detailsIntent =  new Intent(RecognizerIntent.ACTION_GET_LANGUAGE_DETAILS);
 //        sendOrderedBroadcast(
 //                detailsIntent, null, new LanguageDetailsChecker(), null, Activity.RESULT_OK, null, null);
 
 
-
-
     }
-
 
 
     private boolean doubleBackToExitPressedOnce = false;
@@ -193,7 +178,7 @@ public class MainActivity extends AppCompatActivity
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    doubleBackToExitPressedOnce=false;
+                    doubleBackToExitPressedOnce = false;
                 }
             }, 2000);
         }
@@ -227,11 +212,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        if (id == R.id.nav_feedback) {
-            Helper.feedback(this);
-        } else if (id == R.id.nav_policy) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constant.LINK_POLICY)));
-        } else if (id == R.id.nav_share) {
+        if (id == R.id.nav_share) {
             Helper.shareApp(this);
         } else if (id == R.id.nav_intruction) {
             startActivity(introIntent);
@@ -313,24 +294,24 @@ public class MainActivity extends AppCompatActivity
         final RadioGroup rg = (RadioGroup) dialog.findViewById(R.id.radio_group);
         final Button cancel = (Button) dialog.findViewById(R.id.cancel);
         Button ok = (Button) dialog.findViewById(R.id.cofirm);
-        RadioButton rbst=new RadioButton(MainActivity.this); // dynamically creating RadioButton and adding to RadioGroup.
+        RadioButton rbst = new RadioButton(MainActivity.this); // dynamically creating RadioButton and adding to RadioGroup.
         rbst.setText("Default");
         rg.addView(rbst);
-        for(int i=1;i<supportedLanguages.size();i++){
+        for (int i = 1; i < supportedLanguages.size(); i++) {
 
             String[] country = supportedLanguages.get(i).split("-");
-            String languageCode = country.length == 3 ? (country[0]+"-"+country[1]) : country[0];
-            String countryCode = country.length == 2 ? country[1]:
-                    country.length == 3 ? country[2]:"";
-            Locale auxLocale = new Locale(languageCode,countryCode);
-            Log.i("llllll", i + ": "+ languageCode + " size " + countryCode);
+            String languageCode = country.length == 3 ? (country[0] + "-" + country[1]) : country[0];
+            String countryCode = country.length == 2 ? country[1] :
+                    country.length == 3 ? country[2] : "";
+            Locale auxLocale = new Locale(languageCode, countryCode);
+            Log.i("llllll", i + ": " + languageCode + " size " + countryCode);
 
             String name = auxLocale.getDisplayLanguage(auxLocale); // English
             String countryname = auxLocale.getDisplayCountry(auxLocale);
 
             name = name.substring(0, 1).toUpperCase() + name.substring(1);
-            RadioButton rb =new RadioButton(MainActivity.this); // dynamically creating RadioButton and adding to RadioGroup.
-            rb.setText(name+" (" + countryname+")");
+            RadioButton rb = new RadioButton(MainActivity.this); // dynamically creating RadioButton and adding to RadioGroup.
+            rb.setText(name + " (" + countryname + ")");
             rg.addView(rb);
         }
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -351,8 +332,6 @@ public class MainActivity extends AppCompatActivity
         dialog.show();
 
     }
-
-
 
 
 }

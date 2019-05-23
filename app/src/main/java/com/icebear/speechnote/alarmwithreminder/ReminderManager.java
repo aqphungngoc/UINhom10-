@@ -7,9 +7,9 @@ import android.util.Log;
 
 import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
-import com.icebear.speechnote.notefile.DatabaseHelper;
-import com.icebear.speechnote.notefile.Notifi;
-import com.icebear.speechnote.notefile.Reminder;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.model.Notifi;
+import com.icebear.speechnote.model.Reminder;
 import com.icebear.speechnote.utils.Utils;
 
 import java.util.ArrayList;

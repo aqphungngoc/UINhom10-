@@ -15,7 +15,6 @@ import android.util.Log;
 import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.activity.MainActivity;
-import com.icebear.speechnote.notefile.Reminder;
 
 import static com.icebear.speechnote.NoteConst.CHANNEL_ID;
 

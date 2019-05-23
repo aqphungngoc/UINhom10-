@@ -1,4 +1,4 @@
-package com.icebear.speechnote.notefile;
+package com.icebear.speechnote.model;
 
 import java.io.Serializable;
 

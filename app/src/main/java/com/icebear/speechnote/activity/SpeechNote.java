@@ -8,13 +8,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,17 +44,20 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.github.zagum.speechrecognitionview.RecognitionProgressView;
 import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
 import com.icebear.speechnote.NoteConst;
 import com.icebear.speechnote.R;
 import com.icebear.speechnote.WidgetProvider;
 import com.icebear.speechnote.itemadapter.SpinerCategoryAdapter;
-import com.icebear.speechnote.notefile.Category;
-import com.icebear.speechnote.notefile.DatabaseHelper;
-import com.icebear.speechnote.notefile.Medit;
-import com.icebear.speechnote.notefile.Noteib;
-import com.icebear.speechnote.notefile.Reminder;
+import com.icebear.speechnote.model.Category;
+import com.icebear.speechnote.model.DatabaseHelper;
+import com.icebear.speechnote.model.Medit;
+import com.icebear.speechnote.model.Noteib;
+import com.icebear.speechnote.model.Reminder;
+import com.icebear.speechnote.model.SignatureImage;
+import com.icebear.speechnote.utils.DbBitmapUtils;
 import com.icebear.speechnote.utils.Helper;
 
 import java.io.StringWriter;
@@ -62,12 +69,14 @@ public class SpeechNote extends AppCompatActivity {
 
     public static final int MY_PERMISSIONS_REQUEST = 127;
 
+    private static final int REQUEST_EXTERNAL_STORAGE = 140;
+    private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     protected SpeechRecognizer speechRecognizer;
 
     private EditText firstMeditItem;
     protected Intent reconigerIntent;
-    private ImageView voicebtn, textinput, listinput;
+    private ImageView voicebtn, textinput, listinput, signatureinput;
 
     //    private ImageView imageinput;
 
@@ -78,7 +87,7 @@ public class SpeechNote extends AppCompatActivity {
     private boolean dialogopen = false;
     private String languagePreference;
     //    private String textonedittext = "";
-    private DatabaseHelper database;
+    private DatabaseHelper db;
 
     //category
 
@@ -102,6 +111,11 @@ public class SpeechNote extends AppCompatActivity {
     private int alltask = 0;
     private int curtask = 0;
 
+    // Signature Pad
+    private ImageView sigclose;
+    private SignaturePad mSignaturePad;
+    private CardView cvsig;
+    private SignatureImage mSignatureImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +125,8 @@ public class SpeechNote extends AppCompatActivity {
 
         oldmeditlist = new ArrayList<>();
         curmeditlist = new ArrayList<>();
+
+        mSignatureImage = new SignatureImage();
         // add first edit text
 
         Intent intent = getIntent();
@@ -148,11 +164,16 @@ public class SpeechNote extends AppCompatActivity {
             alltask = note.getAlltask();
             curtask = note.getCurtask();
             readMeditList(oldmeditlist);
-            Log.i("aaaaa", oldmeditlist.size() + " size edit request code");
+
+
+            // init mSignatureImage
+            mSignatureImage = db.getSigImage(note.getId());
+
+            Log.i("aaaaa", "noteid: " + note.getId() + " bmid " + mSignatureImage.id + " bitmap: " + mSignatureImage.imgbitmap.length);
+
         }
 
         // use json translate here
-        Log.i("aaaaa", "Id: " + note.getId() + " Des: " + note.getDes());
 
         textinput.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +182,6 @@ public class SpeechNote extends AppCompatActivity {
                 if (getCurLastMeditItem().getKey() != NoteConst.TEXT_JS) {
                     createNewMeditItem(NoteConst.TEXT_JS, "");
                 }
-
                 showSoftKeyboard(SpeechNote.this);
 
             }
@@ -186,8 +206,8 @@ public class SpeechNote extends AppCompatActivity {
                 ContextCompat.getColor(this, R.color.pink)
         };
         recognitionProgressView.setColors(colors);
-
         recognitionProgressView.play();
+
         voicebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,8 +222,8 @@ public class SpeechNote extends AppCompatActivity {
                 closedlg();
             }
         });
-//note title
 
+        //note title
         setUpSpinerCategory();
 
         important = (LinearLayout) findViewById(R.id.important);
@@ -217,10 +237,64 @@ public class SpeechNote extends AppCompatActivity {
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             opendlg(curEditText);
         }
+
+
+        initSignaturePad();
+
+    }
+
+    private void initSignaturePad() {
+
+        mSignaturePad = (SignaturePad) findViewById(R.id.signature_pad);
+        if (request_code == NoteConst.CODE_EDIT_NOTE && mSignatureImage.id != -1) {
+
+            Bitmap sigimg = DbBitmapUtils.getBmImage(mSignatureImage.imgbitmap);
+            mSignaturePad.setSignatureBitmap(sigimg);
+            cvsig.setVisibility(View.VISIBLE);
+        } else {
+            cvsig.setVisibility(View.GONE);
+        }
+        mSignaturePad.setOnSignedListener(new SignaturePad.OnSignedListener() {
+            @Override
+            public void onStartSigning() {
+
+            }
+
+            @Override
+            public void onSigned() {
+
+            }
+
+            @Override
+            public void onClear() {
+
+            }
+        });
+
+        signatureinput.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cvsig.setVisibility(View.VISIBLE);
+
+            }
+        });
+        sigclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSignaturePad.clear();
+
+                db.deleteSig(mSignatureImage.id);
+
+                cvsig.setVisibility(View.GONE);
+            }
+        });
+
     }
 
 
     private void init() {
+        db = new DatabaseHelper(getApplicationContext());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -244,7 +318,26 @@ public class SpeechNote extends AppCompatActivity {
 //        imageinput = (ImageView) findViewById(R.id.image_input);
         medit = (LinearLayout) findViewById(R.id.medittool);
 
+        signatureinput = (ImageView) findViewById(R.id.hand_draw);
+        sigclose = (ImageView) findViewById(R.id.img_clear);
+        mSignaturePad = (SignaturePad) findViewById(R.id.signature_pad);
+        cvsig = (CardView) findViewById(R.id.frame_signature_pad);
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length <= 0
+                        || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(SpeechNote.this, "Cannot write images to external storage", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
 
     private void createNewMeditItem(int typecode, String msg) {
         final View view;
@@ -291,7 +384,7 @@ public class SpeechNote extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (MotionEvent.ACTION_UP == motionEvent.getAction()) {
                     curEditText = editText;
-                    Log.i("aaaaa", " touch editext");
+
                 }
                 return false;
             }
@@ -609,9 +702,11 @@ public class SpeechNote extends AppCompatActivity {
             note.setCreatedtime(System.currentTimeMillis());
 
             if (note.getId() == -1) {
-                database.addNote(note);
+                int id = db.addNote(note);
+                note.setId(id);
+                Log.i("aaaaa", "new note id: " + note.getId());
             } else {
-                database.updateNote(note);
+                db.updateNote(note);
             }
 
 
@@ -622,6 +717,19 @@ public class SpeechNote extends AppCompatActivity {
             Intent intent1 = new Intent(WidgetProvider.BROADCAST_WIDGET_2);
             sendBroadcast(intent1);
 
+
+            if (cvsig.getVisibility() == View.VISIBLE) {
+                mSignatureImage.id = note.getId();
+                mSignatureImage.imgbitmap = DbBitmapUtils.getBytes(mSignaturePad.getSignatureBitmap());
+
+                if (mSignatureImage.id == -1) {
+                    db.addSig(mSignatureImage);
+                } else {
+                    db.deleteSig(mSignatureImage.id);
+                    db.addSig(mSignatureImage);
+                }
+                Log.i("aaaaa", "noteid " + note.getId() + " mSig: " + mSignatureImage.id + " " + mSignatureImage.imgbitmap.length);
+            }
 
         }
         finish();
@@ -668,10 +776,10 @@ public class SpeechNote extends AppCompatActivity {
     }
 
     private void setUpSpinerCategory() {
-        database = new DatabaseHelper(getApplicationContext());
+
         final ArrayList<Category> categories = new ArrayList<Category>();
         categories.add(new Category(0, getString(R.string.choose_Note_Book), 0));
-        final ArrayList cates = database.getAllCategories();
+        final ArrayList cates = db.getAllCategories();
         categories.addAll(cates);
         SpinerCategoryAdapter dataAdapter = new SpinerCategoryAdapter(this,
                 R.layout.item_spiner_notebook, categories);
@@ -797,11 +905,10 @@ public class SpeechNote extends AppCompatActivity {
         ok.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 dlg.dismiss();
-                database.addRemider(reminder);
+                db.addRemider(reminder);
                 Intent intent = new Intent(NoteConst.UPDATE_REMINDER);
                 sendBroadcast(intent);
                 onSave(note);
-
             }
         });
 
@@ -838,7 +945,6 @@ public class SpeechNote extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 if (MotionEvent.ACTION_UP == motionEvent.getAction()) {
                     curEditText = firstMeditItem;
-                    Log.i("aaaaa", " touch editext");
                 }
                 return false;
             }
@@ -904,5 +1010,19 @@ public class SpeechNote extends AppCompatActivity {
         }
         speechRecognizer.startListening(reconigerIntent);
         hideSoftKeyboard(SpeechNote.this);
+    }
+
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
     }
 }

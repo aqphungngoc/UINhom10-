@@ -1,9 +1,6 @@
-package com.icebear.speechnote.notefile;
-
-import android.widget.TextView;
+package com.icebear.speechnote.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class Category implements Serializable {
 

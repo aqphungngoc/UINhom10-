@@ -1,4 +1,4 @@
-package com.icebear.speechnote.notefile;
+package com.icebear.speechnote.model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,25 +19,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "NoteManager";
 
 
-
     //Table 1
     private static final String TABLE_NOTE = "Note";
-    private static final String ID_NOTE ="NoteId";
-    private static final String COLUMN_TITLE ="Title";
+    private static final String ID_NOTE = "NoteId";
+    private static final String COLUMN_TITLE = "Title";
     private static final String COLUMN_DES = "Description";
     private static final String COLUMN_PIORITY = "Done"; // muc do khan cap 1-4
-    private static final String COLUMN_CREATED_DATE= "Createdate";
+    private static final String COLUMN_CREATED_DATE = "Createdate";
     private static final String CATEGORY_ID = "CategoryId";
     private static final String COLUMN_ALL_TASK = "Alltask";
     private static final String COLUMN_CURTASK = "Curtask";
     private static final String COLUMN_DES_PREVIEW = "Preview";
 
 
-
     //Table 2
     private static final String TABLE_CATEGORY = "Category";
     private static final String ID_CATEGORY = "CategoryId";
-    private static final String COLUMN_CATEGORY ="Category";//7
+    private static final String COLUMN_CATEGORY = "Category";//7
 
     //Table 3
     private static final String TABLE_REMINDER = "Reminder";
@@ -49,13 +47,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_VIBRATE = "Vibrate";
     private static final String COLUMN_REPEATABLE = "Repeatable";
 
+    //Table 4
+    private static final String TABLE_SIGIMAGE = "SignatureImage";
+    private static final String ID_SIG = "SigId";
+    private static final String COLUMN_SVGPATH = "Svgpath";//7
 
 
-
-
-    public DatabaseHelper(Context context)  {
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     public DatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
@@ -66,12 +67,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String script = "create table " + TABLE_NOTE+ " ("
+        String script = "create table " + TABLE_NOTE + " ("
                 + ID_NOTE + " integer primary key autoincrement, "
                 + COLUMN_TITLE + " text, "
                 + COLUMN_DES + " text, "
                 + COLUMN_PIORITY + " integer, "
-                + COLUMN_CREATED_DATE+ " integer, "
+                + COLUMN_CREATED_DATE + " integer, "
                 + CATEGORY_ID + " integer, "
                 + COLUMN_ALL_TASK + " integer, "
                 + COLUMN_CURTASK + " integer, "
@@ -89,12 +90,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + ID_REMINDER + " integer primary key autoincrement, "
                 + NOTE_ID + " integer, "
                 + COLUMN_NOTE_DES + " text, "
-                + COLUMN_TIME+ " long, "
+                + COLUMN_TIME + " long, "
                 + COLUMN_RINGTONE + " integer, "
                 + COLUMN_VIBRATE + " integer, "
                 + COLUMN_REPEATABLE + " integer"
-                +")";
+                + ")";
         db.execSQL(script3);
+
+        String script4 = "create table " + TABLE_SIGIMAGE + " ("
+                + ID_SIG + " integer primary key, "
+                + COLUMN_SVGPATH + " blob "
+                + ")";
+        db.execSQL(script4);
 
     }
 
@@ -111,8 +118,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
-    public void addNote(Noteib note) {
+    public int addNote(Noteib note) {
         //Log.i(tag, "MyDatabaseHelper.addNote ... " + note.getTitle());
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -128,16 +134,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DES_PREVIEW, note.getDespreview());
         db.insert(TABLE_NOTE, null, values);
 
+        int id = getNotebyTimeStamp(note.getCreatedtime());
         // Đóng kết nối database.
         db.close();
+        return id;
     }
+
+    private int getNotebyTimeStamp(long createdtime) {
+        String selectQuery = "select * from " + TABLE_NOTE + " where " + COLUMN_CREATED_DATE + " = " + createdtime;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        Noteib note = new Noteib();
+        // Duyệt trên con trỏ, và thêm vào danh sách.
+        if (cursor == null) {
+            return -1;
+        }
+        if (cursor.moveToFirst()) {
+            do {
+                //Log.d("xxxxxxxx", cursor.getString(1)+" say HI " + cursor.getInt(0)+" pp " + cursor.getString(2));
+                note.setId(cursor.getInt(0));
+                note.setTitle(cursor.getString(1));
+                note.setDes(cursor.getString(2));
+                note.setPriority(cursor.getInt(3));
+                note.setCreatedtime(cursor.getLong(4));
+                note.setCategoryid(cursor.getInt(5));
+                note.setAlltask(cursor.getInt(6));
+                note.setCurtask(cursor.getInt(7));
+                note.setDespreview(cursor.getString(8));
+                // Thêm vào danh sách.
+            } while (cursor.moveToNext());
+        }
+        //Log.d("xxxx", note.getTitle()+"");
+        return note.getId();
+    }
+
     public ArrayList<Noteib> getAllNotes() {
         ArrayList<Noteib> noteList = new ArrayList<Noteib>();
         // Select All Query
 //        + " inner join "+ TABLE_CATEGORY
 //                +" on " + TABLE_NOTE + "."+ COLUMN_CATEGORYID + " = " + TABLE_CATEGORY +"."+ COLUMN_ID
         String selectQuery = "select * from " + TABLE_NOTE
-                +" order by " + TABLE_NOTE + "." + NOTE_ID +" desc";
+                + " order by " + TABLE_NOTE + "." + NOTE_ID + " desc";
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -167,10 +205,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return noteList;
     }
 
-    public Noteib getNotebyId(int id){
-       // Log.i(tag, "MyDatabaseHelper.getNotebyID ... " );
+    public Noteib getNotebyId(int id) {
+        // Log.i(tag, "MyDatabaseHelper.getNotebyID ... " );
         // Select All Query
-        String selectQuery = "select * from " + TABLE_NOTE + " where " + ID_NOTE + " =?" ;
+        String selectQuery = "select * from " + TABLE_NOTE + " where " + ID_NOTE + " =?";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -194,18 +232,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // Thêm vào danh sách.
             } while (cursor.moveToNext());
         }
-            //Log.d("xxxx", note.getTitle()+"");
+        //Log.d("xxxx", note.getTitle()+"");
         db.close();
         return note;
     }
 
-    public Noteib getNotebyCategory(String category){
+    public Noteib getNotebyCategory(String category) {
         Noteib note = new Noteib();
-        String selectQuery = "select * from " + TABLE_NOTE + "inner join "+ TABLE_CATEGORY
-                +" on " + TABLE_NOTE + "."+ CATEGORY_ID + " = " + TABLE_CATEGORY +"."+ ID_CATEGORY
-                + " where " + COLUMN_CATEGORY + " =? " ;
+        String selectQuery = "select * from " + TABLE_NOTE + "inner join " + TABLE_CATEGORY
+                + " on " + TABLE_NOTE + "." + CATEGORY_ID + " = " + TABLE_CATEGORY + "." + ID_CATEGORY
+                + " where " + COLUMN_CATEGORY + " =? ";
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, new String[] {category});
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{category});
         // Duyệt trên con trỏ, và thêm vào danh sách.
         if (cursor == null) {
             return note;
@@ -232,13 +270,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-
-    public ArrayList<Noteib> getListNotebyDes(String title){
+    public ArrayList<Noteib> getListNotebyDes(String title) {
         //Log.i(tag, "MyDatabaseHelper.getListNotebyTitle ... " );
         ArrayList<Noteib> noteList = new ArrayList<Noteib>();
         // Select All Query
         String selectQuery = "select * from " + TABLE_NOTE + " where " +
-                COLUMN_TITLE + " like '%"+ title+"%' or "+ COLUMN_DES+ " like '%"+ title+"%' order by "+ ID_NOTE  + " desc";
+                COLUMN_TITLE + " like '%" + title + "%' or " + COLUMN_DES + " like '%" + title + "%' order by " + ID_NOTE + " desc";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -271,12 +308,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //filter
-    public ArrayList<Noteib> getListNotebyPior(String piorpos){
+    public ArrayList<Noteib> getListNotebyPior(String piorpos) {
         //Log.i(tag, "MyDatabaseHelper.getListNotebyTitle ... " );
         ArrayList<Noteib> noteList = new ArrayList<Noteib>();
         // Select All Query
         String selectQuery = "select * from " + TABLE_NOTE + " where " +
-                COLUMN_PIORITY + " = " +  piorpos + " order by "+ ID_NOTE  + " desc";
+                COLUMN_PIORITY + " = " + piorpos + " order by " + ID_NOTE + " desc";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -315,7 +352,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Select All Query
         String selectQuery = "select * from " + TABLE_NOTE + " where " +
 
-                CATEGORY_ID + " = " +  cateid + " order by "+ ID_NOTE  + " desc";
+                CATEGORY_ID + " = " + cateid + " order by " + ID_NOTE + " desc";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -349,15 +386,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<Noteib> noteList = new ArrayList<Noteib>();
         // Select All Query
         String selectQuery;
-        String searchquery = "( " + COLUMN_TITLE + " like '%"+ title+"%' or "+ COLUMN_DES+ " like '%"+ title+"%' ) " ;
-        String cateQuery = cateid.equals("")? "" : ( " and " + CATEGORY_ID + " = " +  cateid ) ;
-        String piorQuery = piorpos.equals("")? "" : ( " and " + COLUMN_PIORITY + " = " +  piorpos + " " ) ;
+        String searchquery = "( " + COLUMN_TITLE + " like '%" + title + "%' or " + COLUMN_DES + " like '%" + title + "%' ) ";
+        String cateQuery = cateid.equals("") ? "" : (" and " + CATEGORY_ID + " = " + cateid);
+        String piorQuery = piorpos.equals("") ? "" : (" and " + COLUMN_PIORITY + " = " + piorpos + " ");
 
         selectQuery = "select * from " + TABLE_NOTE + " where " +
-                searchquery+
+                searchquery +
                 cateQuery +
                 piorQuery +
-                " order by "+ ID_NOTE  + " desc";
+                " order by " + ID_NOTE + " desc";
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -415,14 +452,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DES_PREVIEW, note.getDespreview());
         // updating row
         return db.update(TABLE_NOTE, values, ID_NOTE + " = ?",
-                new String[] {String.valueOf(note.getId())});
+                new String[]{String.valueOf(note.getId())});
     }
 
     public void deleteNote(Noteib note) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String script = "delete from "+TABLE_NOTE+" where "+ID_NOTE+" = ?";
+        String script = "delete from " + TABLE_NOTE + " where " + ID_NOTE + " = ?";
         db.execSQL(script, new String[]{String.valueOf(note.getId())});
         db.close();
     }
@@ -446,14 +483,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ArrayList<Category> categories = new ArrayList<Category>();
         // Select All Query "n."+ ID_NOTE +
-        String selectQuery = "select count(" +"n."+ ID_NOTE + ") as notecount, " + "c."+ ID_CATEGORY +" , " + "c."+COLUMN_CATEGORY
-                + " from " + TABLE_CATEGORY +" c left join " + TABLE_NOTE  + " n on " + " c." + ID_CATEGORY + " = n." + CATEGORY_ID
+        String selectQuery = "select count(" + "n." + ID_NOTE + ") as notecount, " + "c." + ID_CATEGORY + " , " + "c." + COLUMN_CATEGORY
+                + " from " + TABLE_CATEGORY + " c left join " + TABLE_NOTE + " n on " + " c." + ID_CATEGORY + " = n." + CATEGORY_ID
                 + " group by " + " c." + ID_CATEGORY + " order by " + " c." + ID_CATEGORY + " asc";
 //                +" order by " + ID_CATEGORY +" desc";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        Log.i("notebook" , selectQuery);
+        Log.i("notebook", selectQuery);
         // Duyệt trên con trỏ, và thêm vào danh sách.
         if (cursor.moveToFirst()) {
             do {
@@ -461,7 +498,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 category.setId(cursor.getInt(1));
                 category.setCategory(cursor.getString(2));
                 category.setNotecount(cursor.getInt(0));
-                Log.i("notebook" , category.toString());
+                Log.i("notebook", category.toString());
                 // Thêm vào danh sách.
                 categories.add(category);
             } while (cursor.moveToNext());
@@ -484,7 +521,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         return db.update(TABLE_CATEGORY, values, ID_CATEGORY + " = ?",
-                new String[] {String.valueOf(category.getId())});
+                new String[]{String.valueOf(category.getId())});
     }
 
     public void deleteCategory(Category category) {
@@ -492,13 +529,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String script = "delete from "+TABLE_CATEGORY+" where "+ID_CATEGORY+"=?";
+        String script = "delete from " + TABLE_CATEGORY + " where " + ID_CATEGORY + "=?";
 
         db.execSQL(script, new String[]{String.valueOf(category.getId())});
         db.close();
     }
 
-    public int getCategoryCount(){
+    public int getCategoryCount() {
         String countQuery = "SELECT  * FROM " + TABLE_CATEGORY;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
@@ -513,7 +550,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ArrayList<Reminder> reminders = new ArrayList<Reminder>();
         // Select All Query
         String selectQuery = "select * from " + TABLE_REMINDER
-                +" order by " + ID_REMINDER +" desc";
+                + " order by " + ID_REMINDER + " desc";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -526,7 +563,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 reminder.setNoteid(cursor.getInt(1));
                 reminder.setNotedes(cursor.getString(2));
                 reminder.setTime(cursor.getLong(3));
-                Log.i("xxxxx", cursor.getLong(3)+ " time:");
+                Log.i("xxxxx", cursor.getLong(3) + " time:");
                 reminder.setRingtone(cursor.getInt(4));
                 reminder.setVibrate(cursor.getInt(5));
                 reminder.setRepeatable(cursor.getInt(6));
@@ -545,7 +582,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(NOTE_ID, reminder.getNoteid());
         values.put(COLUMN_NOTE_DES, reminder.getNotedes());
         values.put(COLUMN_TIME, reminder.getTime());
-        Log.i("xxxxx", reminder.getTime()+ " time:");
+        Log.i("xxxxx", reminder.getTime() + " time:");
         values.put(COLUMN_RINGTONE, reminder.getRingtone());
         values.put(COLUMN_VIBRATE, reminder.getVibrate());
         values.put(COLUMN_REPEATABLE, reminder.getRepeatable());
@@ -556,7 +593,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public int updateReminder(Reminder reminder){
+    public int updateReminder(Reminder reminder) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(NOTE_ID, reminder.getNoteid());
@@ -566,7 +603,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_VIBRATE, reminder.getVibrate());
         values.put(COLUMN_REPEATABLE, reminder.getRepeatable());
         return db.update(TABLE_REMINDER, values, ID_REMINDER + " = ?",
-                new String[] {String.valueOf(reminder.getId())});
+                new String[]{String.valueOf(reminder.getId())});
     }
 
     public void deleteReminder(Reminder reminder) {
@@ -574,12 +611,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String script = "delete from "+TABLE_REMINDER+" where "+ID_REMINDER+" = ?";
+        String script = "delete from " + TABLE_REMINDER + " where " + ID_REMINDER + " = ?";
 
         db.execSQL(script, new String[]{String.valueOf(reminder.getId())});
         db.close();
     }
 
+    public void addSig(SignatureImage signatureImage) {
+        //Log.i(tag, "MyDatabaseHelper.addNote ... " + note.getTitle());
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ID_SIG, signatureImage.id);
+        values.put(COLUMN_SVGPATH, signatureImage.imgbitmap);
+
+        // Trèn một dòng dữ liệu vào bảng.
+        db.insert(TABLE_SIGIMAGE, null, values);
+        // Đóng kết nối database.
+        db.close();
+    }
+
+    public void deleteSig(int id) {
+        Log.i("aaaaa", "deleteSig id= " + id);
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String script = "delete from " + TABLE_SIGIMAGE + " where " + ID_SIG + " = ?";
+
+        db.execSQL(script, new String[]{String.valueOf(id)});
+        db.close();
+    }
+
+    public SignatureImage getSigImage(int noteid) {
+        SignatureImage res = new SignatureImage();
+        Log.i("aaaaa", "get Sig Image");
+        // Select All Query
+        String selectQuery = "select * from " + TABLE_SIGIMAGE
+                + " where " + ID_SIG + " = " + noteid;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+
+        if (cursor.moveToFirst()) {
+            do {
+                Log.i("aaaaa", "cusor: " + cursor.getInt(0) + " " + cursor.getBlob(1).length + " ");
+                res.id = cursor.getInt(0);
+                res.imgbitmap = cursor.getBlob(1);
+            } while (cursor.moveToNext());
+        }
+
+        Log.i("aaaaa", "cusor: " + res.id + " " + res.imgbitmap.length + " ");
+        db.close();
+
+        return res;
+    }
 
 
 }

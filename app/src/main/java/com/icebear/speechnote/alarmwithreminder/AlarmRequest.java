@@ -1,6 +1,6 @@
 package com.icebear.speechnote.alarmwithreminder;
 
-import com.icebear.speechnote.notefile.Notifi;
+import com.icebear.speechnote.model.Notifi;
 
 import java.util.ArrayList;
 
